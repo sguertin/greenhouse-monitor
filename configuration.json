@@ -1,0 +1,24 @@
+{
+    "sensors": [
+        {
+            "pin": 17,
+            "sensor_model_no": 1,
+            "location": "North Side"
+        },
+        {
+            "pin": 27,
+            "sensor_model_no": 1,
+            "location": "South Side"
+        },
+        {
+            "pin": 22,
+            "sensor_model_no": 1,
+            "location": "East Side"
+        },
+        {
+            "pin": 23,
+            "sensor_model_no": 1,
+            "location": "West Side"
+        }
+    ]
+}
