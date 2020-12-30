@@ -1,4 +1,5 @@
 {
+    "hardwareEmulation": true,
     "sensors": [
         {
             "pin": 17,
