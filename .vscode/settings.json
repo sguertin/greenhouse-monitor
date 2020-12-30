@@ -1,0 +1,10 @@
+{
+    "editor.defaultFormatter": "ms-python.python",
+    "editor.formatOnSave": true,
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.python"
+    },
+    "omnisharp.useEditorFormattingSettings": false,
+    "vetur.format.options.tabSize": 4,
+    "editor.detectIndentation": false
+}
