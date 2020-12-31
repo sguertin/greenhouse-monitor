@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 from pathlib import Path
@@ -8,6 +9,7 @@ from flask import Flask, send_from_directory, Response
 import configuration
 from json_encoder import default_json_encoder
 from monitor import MonitorService, MockMonitorService
+
 
 # set the project root directory as the static folder, you can set others.
 app = Flask(__name__, static_url_path='')
@@ -40,7 +42,15 @@ def send_css(path):
 
 
 @app.route('/reading', methods=['GET'])
-async def send_reading():
+def send_reading():
+    result = asyncio.get_event_loop().run_until_complete(
+        _send_reading()
+    )
+
+    return result
+
+
+async def _send_reading():
     results = []
     readings = await monitor_service.get_data()
     for reading in readings:
