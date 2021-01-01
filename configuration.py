@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
 
 from dataclasses_json import dataclass_json, LetterCase
 
@@ -17,7 +16,9 @@ class SensorSettings:
 @dataclass(frozen=True)
 class Configuration:
     hardware_emulation: bool
-    sensors: List[SensorSettings]
+    heater_url: str
+    humidifier_url: str
+    sensors: list[SensorSettings]
 
 
 def get_settings(cwd: Path) -> Configuration:
