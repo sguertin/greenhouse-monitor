@@ -1,20 +1,19 @@
 import Ajax from './ajax.js';
-import { ReadingEntry } from './components/readingEntry.js';
+import { getFirst as $ } from './utility.js';
+import ReadingEntry from './components/readingEntry.js';
 
-const temperatureDisplay = document.getElementById('temperature');
-const humidityDisplay = document.getElementById('humidity');
-const sensorList = document.getElementById('sensor-list');
-
-const heaterStatus = document.getElementById('heater-status-text');
-const heaterRefreshButton = document.getElementById('heater-refresh');
-const heaterPowerButton = document.getElementById('heater-power');
-
-const humidifierStatus = document.getElementById('humidifier-status-text');
-const humidifierRefreshButton = document.getElementById('humidifier-refresh');
-const humidifierPowerButton = document.getElementById('humidifier-power');
+const temperatureDisplay = $('#avg-temperature'),
+    humidityDisplay = $('#avg-humidity'),
+    sensorList = $('#sensor-list'),
+    heaterStatus = $('#heater-status-text'), 
+    heaterRefreshButton = $('#heater-refresh'), 
+    heaterPowerButton = $('#heater-power'),
+    humidifierStatus = $('#humidifier-status-text'),
+    humidifierRefreshButton = $('#humidifier-refresh'),
+    humidifierPowerButton = $('#humidifier-power');
 
 const getHumidifierStatus = () => {
-    Ajax.get('/humidifier').then(({response, status}) => {
+    Ajax.get('/humidifier').then(({response}) => {
         humidifierStatus.textContent = response.status;
     });
 };
@@ -26,7 +25,7 @@ humidifierPowerButton.onclick = () => {
 };
 
 const getHeaterStatus = () => {
-    Ajax.get('/heater').then(({response, status}) => {
+    Ajax.get('/heater').then(({response}) => {
         heaterStatus.textContent = response.status;
     });
 };
@@ -42,7 +41,7 @@ const getReading = () => {
         let avgTemp = 0, 
             avgHumidity = 0,
             results = response;
-
+        console.log(`Greenhouse Reading Request HttpStatus Response: ${status}`);
         while (sensorList.firstChild) {
             sensorList.removeNode(
                 sensorList.firstChild
@@ -64,7 +63,7 @@ const getReading = () => {
         avgTemp = (avgTemp / results.length);
         avgHumidity = (avgHumidity / results.length);
 
-        temperatureDisplay.textContent = ` ${avgTemp}F°`;
+        temperatureDisplay.textContent = ` ${avgTemp}°F`;
         humidityDisplay.textContent = ` ${avgHumidity}%`;        
 
     }).catch((reason) => {
