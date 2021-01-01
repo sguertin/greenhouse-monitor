@@ -1,11 +1,12 @@
-export default class Ajax {    
+export default class Ajax {
+    
     /** 
     * Executes an asynchronous javascript request, returning a promise that resolves with the request
-    * @param {String} url - The url of the resource to make the request for (Required)
-    * @param {Object} requestBody - Object to be included as the request body of the request (Not applicable for GET requests) (Optional)
-    * @param {Function} success - function to execute upon success (Optional)
-    * @param {Function} failure - function to execute upon failure (Optional)
-    * @param {String} method - The HTTP method to use for the request (Default: GET)
+    * @param {string} url - The url of the resource to make the request for (Required)
+    * @param {object} requestBody - Object to be included as the request body of the request (Not applicable for GET requests) (Optional)
+    * @param {function} success - function to execute upon success (Optional)
+    * @param {function} failure - function to execute upon failure (Optional)
+    * @param {string} method - The HTTP method to use for the request (Default: GET)
     * @return {Promise} A promise that resolves the http request
     */    
     static #request(
@@ -16,9 +17,17 @@ export default class Ajax {
         method = 'GET'
     ) {
         return new Promise((resolve, reject) => {
-            const XHR = new XMLHttpRequest();
+            const XHR = new XMLHttpRequest(), 
+                handleErrors = (errorMsg, status) => {
+                    if (failure) {
+                        failure(errorMsg, status);
+                    }
+                    if (reject) {
+                        reject({errorMsg, status});
+                    }
+                };
             if (!XHR) {
-                const errorMsg = 'Cannot create an XMLHTTP instance';
+                let errorMsg = 'Cannot create an XMLHTTP instance';
                 if (failure) {
                     failure(errorMsg);
                 }
@@ -26,14 +35,6 @@ export default class Ajax {
                     reject(errorMsg);
                 }
                 return;
-            }
-            let handleErrors = (errorMsg, status) => {
-                if (failure) {
-                    failure(errorMsg, status);
-                }
-                if (reject) {
-                    reject({errorMsg, status});
-                }
             }
             XHR.open(method, url);
             //Send the proper header information along with the request
@@ -60,7 +61,7 @@ export default class Ajax {
                         }                        
                     } else {
                         // Oh no! There has been an error with the request!
-                        const errorMsg = `An error occurred with the request to "${url}" Status Code: ${status.toString()}`;
+                        let errorMsg = `An error occurred with the request to "${url}" Status Code: ${status.toString()}`;
                         handleErrors(errorMsg, status);
                     }
                 }
