@@ -1,0 +1,30 @@
+{
+    "name": "greenhouse-monitor",
+    "version": "1.0.0",
+    "description": "a greenhouse monitor on a raspberry pi",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sguertin/greenhouse-monitor.git"
+    },
+    "keywords": [
+        "greenhouse",
+        "raspberrypi",
+        "python",
+        "js",
+        "javascript"
+    ],
+    "author": "Scott Guertin",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/sguertin/greenhouse-monitor/issues"
+    },
+    "homepage": "https://github.com/sguertin/greenhouse-monitor#readme",
+    "devDependencies": {
+        "@babel/core": "^7.12.10",
+        "@babel/eslint-parser": "^7.12.1",
+        "eslint": "^7.16.0"
+    }
+}
