@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # DHT.py
 # 2019-11-07
 # Public Domain
