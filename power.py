@@ -1,32 +1,35 @@
 import asyncio
 from dataclasses import dataclass
+import random
 
 from dataclasses_json import dataclass_json, LetterCase
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL)
-@dataclass
+@dataclass(eq=True, frozen=True)
 class PowerSwitchStatus:
     status: str
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
-@dataclass
 class PowerService:
     heater_url: str
     humidifier_url: str
+
+    def __init__(self, heater_url: str, humidifier_url: str):
+        self.heater_url = heater_url
+        self.humidifier_url = humidifier_url
 
     async def get_humidifier_status(self) -> PowerSwitchStatus:
         raise NotImplementedError(
             "get_humidifier_status has not been implemented")
 
-    async def toggle_humidifier(self) -> None:
+    async def toggle_humidifier(self) -> PowerSwitchStatus:
         raise NotImplementedError("toggle_humidifier has not been implemented")
 
     async def get_heater_status(self) -> PowerSwitchStatus:
         raise NotImplementedError("get_heater_status has not been implemented")
 
-    async def toggle_heater(self) -> None:
+    async def toggle_heater(self) -> PowerSwitchStatus:
         raise NotImplementedError("toggle_heater has not been implemented")
 
 
@@ -37,34 +40,38 @@ class MockPowerService(PowerService):
     def __init__(self):
         super().__init__('', '')
 
-    async def get_humidifier_status(self) -> PowerSwitchStatus:
-        await asyncio.sleep(2)
-        return PowerSwitchStatus(self._heater_status)
-
-    async def toggle_humidifier(self) -> None:
-        await asyncio.sleep(1)
-        if self._heater_status == 'OFF':
-            self._heater_status = 'ON'
-        else:
-            self._heater_status = 'OFF'
-
     async def get_heater_status(self) -> PowerSwitchStatus:
-        await asyncio.sleep(2)
+        await asyncio.sleep(random.randint(1, 3))
         return PowerSwitchStatus(self._heater_status)
 
-    async def toggle_heater(self) -> None:
-        await asyncio.sleep(1)
+    async def toggle_heater(self) -> PowerSwitchStatus:
+        await asyncio.sleep(random.randint(1, 3))
         if self._heater_status == 'OFF':
             self._heater_status = 'ON'
         else:
             self._heater_status = 'OFF'
+
+        return PowerSwitchStatus(self._heater_status)
+
+    async def get_humidifier_status(self) -> PowerSwitchStatus:
+        await asyncio.sleep(random.randint(1, 3))
+        return PowerSwitchStatus(self._humidifier_status)
+
+    async def toggle_humidifier(self) -> PowerSwitchStatus:
+        await asyncio.sleep(random.randint(1, 3))
+        if self._humidifier_status == 'OFF':
+            self._humidifier_status = 'ON'
+        else:
+            self._humidifier_status = 'OFF'
+
+        return PowerSwitchStatus(self._humidifier_status)
 
 
 class PowerServiceProvider:
 
     @staticmethod
-    def get_power_service(debug: bool, heater_url: str = '', humidifier_url: str = '') -> PowerService:
-        if debug:
+    def get_power_service(emulate_hardware: bool, heater_url: str = '', humidifier_url: str = '') -> PowerService:
+        if emulate_hardware:
             return MockPowerService()
         else:
             return PowerService(heater_url, humidifier_url)

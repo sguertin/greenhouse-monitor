@@ -7,13 +7,13 @@ import random
 from dataclasses_json import dataclass_json, LetterCase
 from pigpio import pi as Pi
 import DHT
-from DHT import S, sensor as Sensor
+from DHT import sensor as Sensor
 
 from configuration import SensorSettings
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL)
-@dataclass(frozen=True)
+@dataclass(eq=True, frozen=True)
 class Reading:
     temperature: float
     humidity: float
