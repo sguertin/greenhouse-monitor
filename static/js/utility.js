@@ -5,7 +5,7 @@
  * @param {HTMLElement} [el=null] - The element to be searched, defaults to 'this'
  * @return {Array<HTMLElement>} All elements that match the selector
  */
-let getAll = (selector, el = null) => {
+const getAll = (selector, el = null) => {
     let parent = el;
     if (!el) {
         parent = document;
@@ -20,7 +20,7 @@ let getAll = (selector, el = null) => {
  * @param {HTMLElement} el - The element to be searched, defaults to 'this'
  * @return {HTMLElement} The first element that matches the selector
  */
-let getFirst = (selector, el = null) => {
+const getFirst = (selector, el = null) => {
     let parent = el;
     if (!el) {
         parent = document;
@@ -30,7 +30,7 @@ let getFirst = (selector, el = null) => {
 }
 
 
-export default {
+export {
     getAll,
     getFirst,    
 };

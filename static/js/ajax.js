@@ -9,7 +9,7 @@ export default class Ajax {
     * @param {string} method - The HTTP method to use for the request (Default: GET)
     * @return {Promise} A promise that resolves the http request
     */    
-    static #request(
+    static _request(
         url,
         requestBody = null,
         success = null,
@@ -82,7 +82,7 @@ export default class Ajax {
     * @return {Promise} A promise that resolves the http request
     */
     static get = (url, success = null, failure = null) =>
-        Ajax.#request(url, null, success, failure);
+        Ajax._request(url, null, success, failure);
     /** 
     * Executes an asynchronous javascript POST request, returning a promise that resolves with the request
     * @param {String} url - The url of the resource to make the request for (Required)
@@ -92,7 +92,7 @@ export default class Ajax {
     * @return {Promise} A promise that resolves the http request
     */
     static post = (url, requestBody = null, success = null, failure = null) =>
-        Ajax.#request(url, requestBody, success, failure, 'POST');
+        Ajax._request(url, requestBody, success, failure, 'POST');
     /** 
     * Executes an asynchronous javascript PUT request, returning a promise that resolves with the request
     * @param {String} url - The url of the resource to make the request for (Required)
@@ -102,7 +102,7 @@ export default class Ajax {
     * @return {Promise} A promise that resolves the http request
     */
     static put = (url, requestBody = null, success = null, failure = null) =>
-        Ajax.#request(url, requestBody, success, failure, 'PUT');
+        Ajax._request(url, requestBody, success, failure, 'PUT');
     /** 
     * Executes an asynchronous javascript DELETE request, returning a promise that resolves with the request
     * @param {String} url - The url of the resource to make the request for (Required)
@@ -112,7 +112,7 @@ export default class Ajax {
     * @return {Promise} A promise that resolves the http request
     */    
     static remove = (url, requestBody = null, success = null, failure = null) =>
-        Ajax.#request(url, requestBody, success, failure, 'DELETE');
+        Ajax._request(url, requestBody, success, failure, 'DELETE');
     /** 
     * Executes an asynchronous javascript OPTION request, returning a promise that resolves with the request
     * @param {String} url - The url of the resource to make the request for (Required)
@@ -122,7 +122,7 @@ export default class Ajax {
     * @return {Promise} A promise that resolves the http request
     */    
     static option = (url, requestBody = null, success = null, failure = null) =>
-        Ajax.#request(url, requestBody, success, failure, 'OPTION');
+        Ajax._request(url, requestBody, success, failure, 'OPTION');
 }
 /*
 export default class AjaxStore {

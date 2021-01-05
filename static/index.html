@@ -7,39 +7,65 @@
         <meta name="description" content="A greenhouse monitoring display page" />
         <link rel="stylesheet" href="css/style.css" >
         <link rel="stylesheet" href="css/font-awesome.min.css" >
+        <link rel="stylesheet" href="css/bootstrap/bootstrap.css" >
+        <link rel="stylesheet" href="css/bootstrap/bootstrap-grid.css" >
 
     </head>
     <title>Greenhouse Monitor</title>
 <body>
+        <div id="unit">
+            <span id="celsius" >C</span> 
+            <label class="switch">
+                <input id="unit-toggle" type="checkbox">
+                <span class="slider round"></span>
+            </label>
+            <span id="fahrenheit" >F</span> 
+        <div>
 
-    <table>
-        <tr>
-            <th>Temperature</th>
-            <th>Humidity</th>
-        </tr>
-        <tr></tr>
-        <tr>
-            <td>
-                <span id="avg-temperature"></span>
-            </td>
-            <td>
-                <span id="avg-humidity"></span>
-            </td>
-        </tr>
-    </table>
-    <div id="sensor-list">
-
+        <div class="container" >
+        <div class="row">
+            <div class="col-md"><span>Temperature</span></div>
+            <div class="col-md"><span>Humidity</span></div>
+        </div>
+        <div class="row">
+            <div class="col-md"><span id="avg-temperature">75°F</span></div>
+            <div class="col-md"><span id="avg-humidity">85%</span></div>
+        </div>
     </div>
-    <div id="humidifier-status">
-        <span id="humidifier-status-text"></span>
-        <input id="humidifier-power" type="button" class="fa fa-power-off" ></input>
-        <input id="humidifier-refresh" type="button" class="fa fa-refresh" ></input>
+
+    <div id="sensor-list-display" class="container">
+        <div class="row">
+            <div class="col-lg" id="recorded"></div>
+        </div>       
+    </div>
+    <div id="sensor-list">
+        <div id="sensor-header-row" class="row">
+            <div class="col-sm">Location</div>
+            <div class="col-sm">Temperature</div>
+            <div class="col-sm">Humidity</div>
+            <div class="col-sm">Pin</div>            
+        </div>
+    </div>
+    <div id="humidifier-status" class="container-fluid">
+        <div class="row">
+            <label for="humidifier-status-text" class="col-sm" >Humidifier Status</label>
+            <span id="humidifier-status-text" class="col-sm" >OFF</span>
+        </div>
+        <div class="row">
+            <div id="humidifier-power" class="col-sm fa fa-power-off" ></div>
+            <div id="humidifier-refresh" class="col-sm fa fa-refresh" ></div>
+        </div>
     </div>
     
-    <div id="heater-status">
-        <span id="heater-status-text"></span>
-        <input id="heater-power" type="button" class="fa fa-power-off" ></input>
-        <input id="heater-refresh" type="button" class="fa fa-refresh" ></input>
+    <div id="heater-status" class="container-fluid">
+        <div class="row">
+            <label for="heater-status-text" class="col-sm" >Heater Status</label>
+            <span id="heater-status-text" class="col-sm" >OFF</span>
+        </div>
+        <div class="row">
+            <div id="heater-power" class="fa fa-power-off" ></div>
+            <div id="heater-refresh" class="fa fa-refresh" ></div>
+        </div>
     </div>
     
 </body>

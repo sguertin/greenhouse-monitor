@@ -1,8 +1,12 @@
 import Ajax from './ajax.js';
-import { getFirst as $ } from './utility.js';
+import { getFirst as $, getAll as $$ } from './utility.js';
+
 import ReadingEntry from './components/readingEntry.js';
 
-const temperatureDisplay = $('#avg-temperature'),
+debugger;
+
+const model = { unit: 'F' },
+    temperatureDisplay = $('#avg-temperature'),
     humidityDisplay = $('#avg-humidity'),
     sensorList = $('#sensor-list'),
     heaterStatus = $('#heater-status-text'), 
@@ -10,8 +14,27 @@ const temperatureDisplay = $('#avg-temperature'),
     heaterPowerButton = $('#heater-power'),
     humidifierStatus = $('#humidifier-status-text'),
     humidifierRefreshButton = $('#humidifier-refresh'),
-    humidifierPowerButton = $('#humidifier-power');
+    humidifierPowerButton = $('#humidifier-power'),
+    fahrenheitLabel = $('#fahrenheit'),
+    celsiusLabel = $('#celsius'),
+    unitToggle = $('#unit-toggle');
 
+fahrenheitLabel.onclick = () => {
+    unitToggle.checked = true;
+}
+
+celsiusLabel.onclick = () => {
+    unitToggle.checked = false;
+}
+
+unitToggle.onchange = () => {
+    let entries = $$('reading-entry');
+    model.unit = unitToggle.checked ? 'F' : 'C';
+
+    for (let i = 0; i < entries.length; i++) {
+        entries[i].unit = model.unit;
+    }
+}
 const getHumidifierStatus = () => {
     Ajax.get('/humidifier').then(({response}) => {
         humidifierStatus.textContent = response.status;
@@ -40,24 +63,27 @@ const getReading = () => {
     Ajax.get('/reading').then(({response, status}) => {
         let avgTemp = 0, 
             avgHumidity = 0,
-            results = response;
+            results = response.results;
         console.log(`Greenhouse Reading Request HttpStatus Response: ${status}`);
         while (sensorList.firstChild) {
             sensorList.removeNode(
                 sensorList.firstChild
             );
         }
+        
         for (let i = 0; i < results.length; i++) {
+            let entry = document.createElement('reading-entry');
+            entry.humidity = results[i].humidity; 
+            entry.location = results[i].location;
+            entry.pin = results[i].pin;
+            entry.temperature = results[i].temperature;
+            entry.unit = model.unit;
+            entry.index = i;
+            
             avgTemp += results[i].temperature;
             avgHumidity += results[i].humidity;
-            sensorList.appendChild(
-                new ReadingEntry(
-                    results[i].temperature, 
-                    results[i].humidity, 
-                    results[i].location,
-                    i,
-                )
-            );
+            
+            sensorList.appendChild(entry);
         }
 
         avgTemp = (avgTemp / results.length);

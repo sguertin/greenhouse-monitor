@@ -6,66 +6,79 @@
  * @class ReadingEntry
  * @extends {HTMLDivElement}
  */
-export default class ReadingEntry extends HTMLDivElement {
+export default class ReadingEntry extends HTMLDivElement  {
+    rendered = false;
+
+    
     get temperature() {
-        return this.#temperature;
+        return this.getAttribute('temperature') || 0;
     }
     set temperature(temperature) {
-        this.#temperatureEl.textContent =  ` ${temperature} °${this.#unit}`;;
-        this.#temperature = temperature;
+        this.setAttribute('temperature', temperature);
     }
-
     get humidity() {
-        return this.#humidity;
+        return this.getAttribute('humidity') || 0;
     }
     set humidity(humidity) {
-        this.#humidity = humidity;
-        this.#humidityEl.textContent =  `${humidity}%`;
+        this.setAttribute('humidity', humidity);
     }
-
     get location() {
-        return this.#location;
+        return this.getAttribute('location') || 'UNKNOWN';
     }
     set location(location) {
-        this.#location = location;
-        this.#locationEl.textContent = location;
+        this.setAttribute('location', location);
+    }
+    get pin() {
+        return this.getAttribute('pin') || 'UNKNOWN';
+    }
+    set pin(pin) {
+        this.setAttribute('pin', pin);
+    }
+    get unit() {
+        return this.getAttribute('unit') || 'F';
+    }
+    set unit(unit) {
+        this.setAttribute('unit', unit);
     }
 
-    get index() {
-        return this.#index;
-    }
-
-    #temperature;
-    #temperatureEl;
-    #humidity;
-    #humidityEl;
-    #location;
-    #locationEl;
-    #index;
-    #unit;
-
-    constructor(temperature, humidity, location, index, unit = 'F') {
+    constructor() {
         super();
-        this.#unit = unit;
-        this.#index = index;                
-        this.setAttribute('tabIndex', index);        
-        this.setAttribute('class', 'ReadingEntry');
-        
-        this.#temperatureEl = new HTMLSpanElement();
-        this.#temperatureEl.setAttribute('class', 'Temperature');
-        this.temperature = temperature;
-        
-        this.#humidityEl = new HTMLSpanElement();
-        this.#humidityEl.setAttribute('class', 'Humidity');
-        this.humidity = humidity;
-
-        this.#locationEl = new HTMLSpanElement();
-        this.#locationEl.setAttribute('class', 'Location');
-        this.location = location;
-
-        this.appendChild(this.#temperatureEl);
-        this.appendChild(this.#humidityEl);
-        this.appendChild(this.#locationEl);
-        
+        this.setAttribute('temperature', 0);
+        this.setAttribute('humidity', 0);
+        this.setAttribute('location', 'UNKNOWN');
+        this.setAttribute('pin', 'UNKNOWN');
+        this.setAttribute('unit', 'F');
     }
+    
+    render() {
+        this.innerHTML = `            
+            <div class="col-sm">
+                ${this.location}
+            </div>
+            <div class="col-sm">
+                ${this.temperature}°${this.unit}
+            </div>
+            <div class="col-sm">
+                ${this.humidity}
+            </div>
+            <div class="col-sm">
+                ${this.pin}
+            </div>                
+        `;
+    }
+
+    static get observedAttributes() {
+        return ['humidity', 'location', 'pin', 'temperature', 'unit'];
+    }
+    
+    attributeChangedCallback(name, oldValue, newValue) {        
+        this.render();
+        if (this.rendered === false) {
+            this.rendered = true;
+        }
+    }
+
+
+    
 }
+customElements.define('reading-entry', ReadingEntry, { extends: 'div' });
