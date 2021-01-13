@@ -3,17 +3,18 @@ import json
 from pathlib import Path
 
 import pigpio
-from flask import Flask, send_from_directory, Response, request
 
 import configuration
 from json_encoder import default_json_encoder
-from monitor import MonitorServiceProvider
+from monitor import MonitorServiceProvider, ReadingResults
 from power import PowerServiceProvider, PowerSwitchStatus
+from fastapi import FastAPI, status
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import Response
+app = FastAPI()
 
-app = Flask(__name__, static_url_path='',)
-
-app.temperature_status = 'OFF'
-app.heater_status = 'OFF'
+temperature_status = 'OFF'
+heater_status = 'OFF'
 
 cwd = Path.cwd()
 config = configuration.get_settings(cwd)
@@ -37,88 +38,51 @@ power_service = PowerServiceProvider.get_power_service(
     config.humidifier_url,
 )
 
+app.mount('/', StaticFiles(directory='static', html=True), name='static')
 
-@app.route('/<path:path>', methods=['GET'])
-def send_html(path):
-    file_path = cwd.joinpath('static', path)
-    if Path(file_path).is_file():
-        return send_from_directory(cwd.joinpath('static'), path)
-    else:
-        return send_from_directory(cwd.joinpath('static'), 'index.html')
-
-
-@app.route('/js/<path:path>', methods=['GET'])
-def send_js(path):
-    return send_from_directory(cwd.joinpath('static', 'js'), path)
+# @app.get('/')
+# def send_html(path):
+#     file_path = cwd.joinpath('static', path)
+#     if Path(file_path).is_file():
+#         return send_from_directory(cwd.joinpath('static'), path)
+#     else:
+#         return send_from_directory(cwd.joinpath('static'), 'index.html')
 
 
-@app.route('/css/<path:path>', methods=['GET'])
-def send_css(path):
-    return send_from_directory(cwd.joinpath('static', 'css'), path)
+# @app.route('/js/<path:path>', methods=['GET'])
+# def send_js(path):
+#     return send_from_directory(cwd.joinpath('static', 'js'), path)
 
 
-@app.route('/reading', methods=['GET'])
-def send_reading():
-    result = asyncio.get_event_loop().run_until_complete(
-        _send_reading()
-    )
-
-    return result
+# @app.route('/css/<path:path>', methods=['GET'])
+# def send_css(path):
+#     return send_from_directory(cwd.joinpath('static', 'css'), path)
 
 
-async def _send_reading():
-    responseBody = {}
-    responseBody['results'] = []
-    readings = await monitor_service.get_data()
-    for reading in readings:
-        responseBody['results'].append(reading.to_dict())
-
-    return Response(
-        json.dumps(responseBody, default=default_json_encoder),
-        content_type='application/json'
-    )
+@app.get('/reading')
+async def send_reading() -> ReadingResults:
+    return await monitor_service.get_data()
 
 
-@app.route('/humidifier', methods=['GET', 'POST'])
-def humidifier_status():
-    if request.method == 'POST':
-        asyncio.get_event_loop().run_until_complete(
-            power_service.toggle_heater()
-        )
-        return Response('OK', status=200)
+@app.get('/heater')
+async def heater_status() -> PowerSwitchStatus:
+    return await power_service.get_heater_status()
 
-    result = asyncio.get_event_loop().run_until_complete(
-        power_service.get_humidifier_status()
-    )
-    return Response(result, status=200, content_type='application/json')
+@app.post('/heater')
+async def toggle_heater():
+    await power_service.toggle_heater()
+    return Response(status=status.HTTP_200_OK)
 
 
-async def get_humidifier_status() -> PowerSwitchStatus:
+@app.get('/humidifier')
+async def humidifier_status() -> PowerSwitchStatus:
     return await power_service.get_humidifier_status()
 
 
+@app.post('/humidifier')
 async def set_humidifier_status():
     await power_service.toggle_humidifier()
+    return Response(status=status.HTTP_200_OK)
 
-
-@app.route('/heater', methods=['GET', 'POST'])
-def heater_status():
-    if request.method == 'POST':
-        asyncio.get_event_loop().run_until_complete(
-            power_service.toggle_heater()
-        )
-        return Response('OK', status=200)
-    result = asyncio.get_event_loop().run_until_complete(
-        power_service.get_heater_status()
-    )
-    return Response(result, status=200, content_type='application/json')
-
-
-async def get_heater_status() -> PowerSwitchStatus:
-    return await power_service.get_heater_status()
-
-
-async def set_heater_status():
-    await power_service.toggle_humidifier()
 
 app.run()

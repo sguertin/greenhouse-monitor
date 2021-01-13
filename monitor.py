@@ -5,6 +5,8 @@ from dataclasses import dataclass
 import random
 
 from dataclasses_json import dataclass_json, LetterCase
+from pydantic import BaseModel
+
 from pigpio import pi as Pi
 import DHT
 from DHT import sensor as Sensor
@@ -13,13 +15,20 @@ from configuration import SensorSettings
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL)
-@dataclass(eq=True, frozen=True)
-class Reading:
+@dataclass(frozen=True)
+class Reading(BaseModel):
     temperature: float
     humidity: float
     location: str
     pin: int
     recorded: datetime = datetime.now()
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass(frozen=True)
+class ReadingResults(BaseModel):
+    results: list[Reading]
+    timestamp: datetime = datetime.now()
 
 
 class SensorMonitor:
@@ -99,7 +108,7 @@ class MonitorService:
                 )
             )
 
-    async def get_data(self) -> list[Reading]:
+    async def get_data(self) -> ReadingResults:
         tasks = []
 
         for sensor in self.sensors:
@@ -109,7 +118,7 @@ class MonitorService:
                 )
             )
 
-        return await asyncio.gather(*tasks)
+        return ReadingResults(await asyncio.gather(*tasks))
 
 
 class MockMonitorService(MonitorService):
