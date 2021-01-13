@@ -3,11 +3,11 @@ from dataclasses import dataclass
 import random
 
 from dataclasses_json import dataclass_json, LetterCase
-
+from pydantic import BaseModel
 
 @dataclass_json(letter_case=LetterCase.CAMEL)
-@dataclass(eq=True, frozen=True)
-class PowerSwitchStatus:
+@dataclass(frozen=True)
+class PowerSwitchStatus(BaseModel):
     status: str
 
 
