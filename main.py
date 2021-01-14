@@ -50,7 +50,6 @@ async def heater_status() -> PowerSwitchStatus:
     return await power_service.get_heater_status()
 
 @app.post('/heater')
-
 async def toggle_heater():
     await power_service.toggle_heater()
     return Response(status=status.HTTP_200_OK)
