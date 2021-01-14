@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="A greenhouse monitoring display page" />
         <link rel="stylesheet" href="css/style.css" >
+        <link rel="stylesheet" href="css/switch.css" >
         <link rel="stylesheet" href="css/font-awesome.min.css" >
         <link rel="stylesheet" href="css/bootstrap/bootstrap.css" >
         <link rel="stylesheet" href="css/bootstrap/bootstrap-grid.css" >
@@ -23,23 +24,23 @@
         <div>
 
         <div class="container" >
-        <div class="row">
+        <div class="row large-row">
             <div class="col-md"><span>Temperature</span></div>
             <div class="col-md"><span>Humidity</span></div>
         </div>
-        <div class="row">
+        <div class="row huge-row">
             <div class="col-md"><span id="avg-temperature">75°F</span></div>
             <div class="col-md"><span id="avg-humidity">85%</span></div>
         </div>
     </div>
 
     <div id="sensor-list-display" class="container">
-        <div class="row">
+        <div class="row medium-row">
             <div class="col-lg" id="recorded"></div>
         </div>       
     </div>
-    <div id="sensor-list">
-        <div id="sensor-header-row" class="row">
+    <div id="sensor-list" class="container">
+        <div id="sensor-header-row medium-row" class="row">
             <div class="col-sm">Location</div>
             <div class="col-sm">Temperature</div>
             <div class="col-sm">Humidity</div>

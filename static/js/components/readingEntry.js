@@ -8,7 +8,6 @@
  */
 export default class ReadingEntry extends HTMLDivElement  {
     rendered = false;
-
     
     get temperature() {
         return this.getAttribute('temperature') || 0;
@@ -48,20 +47,29 @@ export default class ReadingEntry extends HTMLDivElement  {
         this.setAttribute('location', 'UNKNOWN');
         this.setAttribute('pin', 'UNKNOWN');
         this.setAttribute('unit', 'F');
+        this.setAttribute('class', 'row medium-row')
     }
-    
+    static create({temperature, humidity, location, pin, unit}) {
+        let newEntry = document.createElement('reading-entry');
+        newEntry.temperature = temperature;
+        newEntry.humidity = humidity;
+        newEntry.location = location;
+        newEntry.pin = pin;
+        newEntry.unit = unit;
+        return newEntry;
+    }
     render() {
         this.innerHTML = `            
-            <div class="col-sm">
+            <div class="bold col-sm-2">
                 ${this.location}
             </div>
-            <div class="col-sm">
+            <div class="bold col-sm-1">
                 ${this.temperature}°${this.unit}
             </div>
-            <div class="col-sm">
+            <div class="bold col-sm-1">
                 ${this.humidity}
             </div>
-            <div class="col-sm">
+            <div class="bold col-sm-1">
                 ${this.pin}
             </div>                
         `;
@@ -76,9 +84,6 @@ export default class ReadingEntry extends HTMLDivElement  {
         if (this.rendered === false) {
             this.rendered = true;
         }
-    }
-
-
-    
+    }    
 }
 customElements.define('reading-entry', ReadingEntry, { extends: 'div' });

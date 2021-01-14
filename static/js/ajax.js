@@ -1,5 +1,5 @@
 export default class Ajax {
-    
+
     /** 
     * Executes an asynchronous javascript request, returning a promise that resolves with the request
     * @param {string} url - The url of the resource to make the request for (Required)
@@ -8,7 +8,7 @@ export default class Ajax {
     * @param {function} failure - function to execute upon failure (Optional)
     * @param {string} method - The HTTP method to use for the request (Default: GET)
     * @return {Promise} A promise that resolves the http request
-    */    
+    */
     static _request(
         url,
         requestBody = null,
@@ -17,60 +17,61 @@ export default class Ajax {
         method = 'GET'
     ) {
         return new Promise((resolve, reject) => {
-            const XHR = new XMLHttpRequest(), 
+            const XHR = new XMLHttpRequest(),
                 handleErrors = (errorMsg, status) => {
                     if (failure) {
                         failure(errorMsg, status);
                     }
                     if (reject) {
-                        reject({errorMsg, status});
+                        reject({ errorMsg, status });
                     }
                 };
-            if (!XHR) {
-                let errorMsg = 'Cannot create an XMLHTTP instance';
-                if (failure) {
-                    failure(errorMsg);
+            try {
+                if (!XHR) {
+                    let errorMsg = 'Cannot create an XMLHTTP instance';
+                    if (failure) {
+                        failure(errorMsg);
+                    }
+                    if (reject) {
+                        reject(errorMsg);
+                    }
+                    return;
                 }
-                if (reject) {
-                    reject(errorMsg);
-                }
-                return;
-            }
-            XHR.open(method, url);
-            //Send the proper header information along with the request
-            XHR.onreadystatechange = () => {
-                // In local files, status is 0 upon success in Mozilla Firefox
-                if (XHR.readyState === XMLHttpRequest.DONE) {
-                    let status = XHR.status;
-                    
-                    if (status === 0 || (status >= 200 && status < 400)) {
-                        // The request has been completed successfully
-                        let response = null;
-                        if (XHR.responseText) {
-                            try {
+
+                XHR.open(method, url);
+                //Send the proper header information along with the request
+                XHR.onreadystatechange = () => {
+                    // In local files, status is 0 upon success in Mozilla Firefox
+                    if (XHR.readyState === XMLHttpRequest.DONE) {
+                        let status = XHR.status;
+
+                        if (status === 0 || (status >= 200 && status < 400)) {
+                            // The request has been completed successfully
+                            let response = null;
+                            if (XHR.responseText) {
                                 response = JSON.parse(XHR.responseText);
                                 if (success) {
                                     success(response, status);
                                 }
                                 if (resolve) {
-                                    resolve({response, status});
+                                    resolve({ response, status });
                                 }
-                            } catch (error) {
-                                handleErrors(error.message, status);
-                            }                            
-                        }                        
-                    } else {
-                        // Oh no! There has been an error with the request!
-                        let errorMsg = `An error occurred with the request to "${url}" Status Code: ${status.toString()}`;
-                        handleErrors(errorMsg, status);
+                            }
+                        } else {
+                            // Oh no! There has been an error with the request!
+                            let errorMsg = `An error occurred with the request to "${url}" Status Code: ${status.toString()}`;
+                            handleErrors(errorMsg, status);
+                        }
                     }
+                };
+                XHR.setRequestHeader('Content-Type', 'application/json');
+                if (requestBody && method !== 'GET') {
+                    requestBody = JSON.stringify(requestBody);
                 }
-            };
-            XHR.setRequestHeader('Content-Type', 'application/json');
-            if (requestBody && method !== 'GET') {
-                requestBody = JSON.stringify(requestBody);
+                XHR.send(requestBody);
+            } catch (error) {
+                handleErrors(error.message, status);
             }
-            XHR.send(requestBody);
         });
     }
 
@@ -110,7 +111,7 @@ export default class Ajax {
     * @param {Function} success - function to execute upon success (Optional)
     * @param {Function} failure - function to execute upon failure (Optional)
     * @return {Promise} A promise that resolves the http request
-    */    
+    */
     static remove = (url, requestBody = null, success = null, failure = null) =>
         Ajax._request(url, requestBody, success, failure, 'DELETE');
     /** 
@@ -120,7 +121,7 @@ export default class Ajax {
     * @param {Function} success - function to execute upon success (Optional)
     * @param {Function} failure - function to execute upon failure (Optional)
     * @return {Promise} A promise that resolves the http request
-    */    
+    */
     static option = (url, requestBody = null, success = null, failure = null) =>
         Ajax._request(url, requestBody, success, failure, 'OPTION');
 }

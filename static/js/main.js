@@ -1,10 +1,6 @@
 import Ajax from './ajax.js';
 import { getFirst as $, getAll as $$ } from './utility.js';
-
 import ReadingEntry from './components/readingEntry.js';
-
-debugger;
-
 const model = { unit: 'F' },
     temperatureDisplay = $('#avg-temperature'),
     humidityDisplay = $('#avg-humidity'),
@@ -27,7 +23,7 @@ celsiusLabel.onclick = () => {
     unitToggle.checked = false;
 }
 
-unitToggle.onchange = () => {
+unitToggle.onclick = () => {
     let entries = $$('reading-entry');
     model.unit = unitToggle.checked ? 'F' : 'C';
 
@@ -66,23 +62,15 @@ const getReading = () => {
             results = response.results;
         console.log(`Greenhouse Reading Request HttpStatus Response: ${status}`);
         while (sensorList.firstChild) {
-            sensorList.removeNode(
+            sensorList.removeChild(
                 sensorList.firstChild
             );
-        }
-        
+        }        
         for (let i = 0; i < results.length; i++) {
-            let entry = document.createElement('reading-entry');
-            entry.humidity = results[i].humidity; 
-            entry.location = results[i].location;
-            entry.pin = results[i].pin;
-            entry.temperature = results[i].temperature;
-            entry.unit = model.unit;
-            entry.index = i;
-            
+            results[i].unit = model.unit;
+            let entry = ReadingEntry.create(results[i]);
             avgTemp += results[i].temperature;
-            avgHumidity += results[i].humidity;
-            
+            avgHumidity += results[i].humidity;            
             sensorList.appendChild(entry);
         }
 
@@ -97,6 +85,6 @@ const getReading = () => {
     });
 }
 
-setInterval(() => getReading(), 3000);
-setInterval(() => getHumidifierStatus(), 5000);
-setInterval(() => getHeaterStatus(), 5000);
+setInterval(() => getReading(), 10000);
+//setInterval(() => getHumidifierStatus(), 5000);
+//setInterval(() => getHeaterStatus(), 5000);

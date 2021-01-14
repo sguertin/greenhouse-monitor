@@ -40,6 +40,7 @@ power_service = PowerServiceProvider.get_power_service(
 
 app.mount('/', StaticFiles(directory='static', html=True), name='static')
 
+
 @app.get('/reading')
 async def send_reading() -> ReadingResults:
     return await monitor_service.get_data()
@@ -48,6 +49,7 @@ async def send_reading() -> ReadingResults:
 @app.get('/heater')
 async def heater_status() -> PowerSwitchStatus:
     return await power_service.get_heater_status()
+
 
 @app.post('/heater')
 async def toggle_heater():

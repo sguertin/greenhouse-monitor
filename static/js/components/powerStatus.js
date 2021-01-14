@@ -50,20 +50,20 @@ export default class PowerStatus extends HTMLDivElement {
         if (this.rendered === false) {
             this.rendered = true;
         }
-        this.querySelector('.fa-power-off').onclick = this._powerClick;
-        this.querySelector('.fa-refresh').onclick = this._refreshClick;
+        this.querySelector('div.fa-power-off').onclick = this._powerClick;
+        this.querySelector('div.fa-refresh').onclick = this._refreshClick;
     }
 
     render () {
         this.innerHTML = `
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm" >${this.labelText}</div>
-                <div class="col-sm" >${this.status}</div>
+            <div class="row medium-row">
+                <div class="col-sm-1" >${this.labelText}</div>
+                <div class="col-sm-1" >${this.status}</div>
             </div>
             <div class="row">
-                <div class="col-sm fa fa-power-off" ></div>
-                <div class="col-sm fa fa-refresh" ></div>
+                <div class="col-sm-1 fa fa-power-off" ></div>
+                <div class="col-sm-1 fa fa-refresh" ></div>
             </div>
         </div>
         `;
