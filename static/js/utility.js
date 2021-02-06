@@ -30,7 +30,42 @@ const getFirst = (selector, el = null) => {
 }
 
 
+/**
+ *  Template Literal Function that when passed a data object, will bind the objects key/value pairs with all matching keys in the template string (See example below)
+ *  
+ * ex. 
+ * 
+ * ```
+ *  let myTemplate = template`` 
+ *      I am a template string that says {'Blah'}
+ *  ``;
+ *  console.log(myTemplate({ Blah: 'Ooogie boogie'}));
+ *  
+ * ```
+ * 
+ * output:
+ * `I am a template string that says Ooogie boogie` 
+ *  
+ * (For more information about Template Literals see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) 
+ * 
+ * @param {string[]} strings Array of strings that comprise the template string
+ * @param {string[]} keys The keys of the template string to bind when calling the function
+ * @return {Function} A function that will return a rendered template when passed an object with matching keys
+ */
+const template = (strings, ...keys) => {
+    return (function(...values) {
+        let dict = values[values.length - 1] || {};
+        let result = [strings[0]];
+        keys.forEach(function(key, i) {
+        let value = Number.isInteger(key) ? values[key] : dict[key];
+        result.push(value, strings[i + 1]);
+        });
+        return result.join('');
+    });
+}
+
 export {
     getAll,
     getFirst,    
+    template,
 };

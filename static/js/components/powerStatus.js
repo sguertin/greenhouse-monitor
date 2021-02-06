@@ -1,5 +1,5 @@
 import Ajax from '../ajax';
-
+import {template as html} from '../utility';
 export default class PowerStatus extends HTMLDivElement {
     rendered = false;
 
@@ -25,23 +25,50 @@ export default class PowerStatus extends HTMLDivElement {
     set labelText(value) {
         this.setAttribute('labelText', value);
     }
-    _powerClick() {
-        Ajax.post(this.resourceId).then((response)=> {
+    get data() {
+        return {
+            resourceId: this.resourceId,
+            status: this.status,
+            labelText: this.labelText,
+        };
+    }
+    set data({resourceId, status, labelText}) {
+        this.resourceId = resourceId;
+        this.status = status;
+        this.labelText = labelText;
+    }
+    togglePower() {
+        Ajax.post(this.resourceId).then(response => {
+            if (response) {
+                console.log(response);
+            }            
+            // TODO finish implementation
+            //this.status = response.status;
+            
+        }).finally(() => {
             if (this.status === 'OFF') {
                 this.status = 'ON';
             } else {
                 this.status = 'OFF';
-            }
+            }            
         });
-        // TODO finish implementation
+        
     }
 
-    _refreshClick() {
+    refreshStatus() {
         Ajax.get(this.resourceId).then((response) => {
-            this.status = response.status;
-        })
+            if (response) {
+                console.log(response);
+            }
+            //this.status = response.status;
+        });
     }
-
+    render() {
+        let color = this.status === 'OFF' ? 'red' : 'green',
+            data = {...this.data, color: color };
+        
+        this.shadowRoot.innerHTML = this.template(data);
+    }
     static get observedAttributes() {
         return ['labelText', 'status', 'resourceId',];
     }
@@ -50,22 +77,22 @@ export default class PowerStatus extends HTMLDivElement {
         if (this.rendered === false) {
             this.rendered = true;
         }
-        this.querySelector('div.fa-power-off').onclick = this._powerClick;
-        this.querySelector('div.fa-refresh').onclick = this._refreshClick;
+        this.querySelector('div.fa-power-off').onclick = this.togglePower;
+        this.querySelector('div.fa-refresh').onclick = this.refreshStatus;
     }
 
-    render () {
-        this.innerHTML = `
-        <div class="container-fluid">
-            <div class="row medium-row">
-                <div class="col-sm-1" >${this.labelText}</div>
-                <div class="col-sm-1" >${this.status}</div>
+    get template () {
+        return html`
+            <div class="container-fluid">
+                <div class="row huge-row">
+                    <div class="col-md" >${'labelText'}</div>
+                    <div style="color: ${'color'};" class="col-md" >${'status'}</div>
+                </div>
+                <div class="row huge-row">
+                    <div style="color: ${'color'};" class="col-md fa fa-power-off" ></div>
+                    <div class="col-md fa fa-refresh" ></div>
+                </div>
             </div>
-            <div class="row">
-                <div class="col-sm-1 fa fa-power-off" ></div>
-                <div class="col-sm-1 fa fa-refresh" ></div>
-            </div>
-        </div>
         `;
     }
 }

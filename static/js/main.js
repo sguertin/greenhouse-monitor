@@ -1,6 +1,6 @@
 import Ajax from './ajax.js';
 import { getFirst as $, getAll as $$ } from './utility.js';
-import ReadingEntry from './components/readingEntry.js';
+import ReadingEntry from './components/readingPanel.js';
 const model = { unit: 'F' },
     temperatureDisplay = $('#avg-temperature'),
     humidityDisplay = $('#avg-humidity'),
