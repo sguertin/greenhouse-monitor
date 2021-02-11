@@ -1,19 +1,25 @@
 import { template as html, getAll } from '../utility';
+
+interface Reading {
+    temperature: number,
+    humidity: number,
+    location: string,
+    pin: number,
+    unit: string,
+    recorded: Date
+}
+
 /**
- * A reading entry from a sensor
+ * A reading entry from a sensor  
  *
  * @export
  * @class ReadingEntry
  * @extends {HTMLDivElement}
  */
-class ReadingEntry extends HTMLDivElement {
-    constructor() {
-        super();
-        this.rendered = false;
-        this.attachShadow({ mode: 'open' });
-    }
-    get data() {
-        return {
+class ReadingEntry extends HTMLDivElement  {
+    rendered = false;
+    get data(): Reading {
+        return { 
             temperature: this.temperature,
             humidity: this.humidity,
             location: this.location,
@@ -22,7 +28,7 @@ class ReadingEntry extends HTMLDivElement {
             recorded: this.recorded,
         };
     }
-    set data({ temperature, humidity, location, pin, unit, recorded }) {
+    set data({temperature, humidity, location, pin, unit, recorded}: Reading) {
         this.temperature = temperature;
         this.humidity = humidity;
         this.location = location;
@@ -30,58 +36,66 @@ class ReadingEntry extends HTMLDivElement {
         this.unit = unit;
         this.recorded = recorded;
     }
+
     render() {
         this.shadowRoot.innerHTML = this.template(this.data);
     }
-    get temperature() {
+    get temperature(): number {
         let attrVal = this.getAttribute('temperature');
         if (attrVal) {
-            return parseInt(attrVal);
+            return parseInt(attrVal)
         }
         return 0;
     }
-    set temperature(temperature) {
+    set temperature(temperature: number) {
         this.setAttribute('temperature', temperature.toString());
     }
-    get humidity() {
+    get humidity(): number {
         let attrVal = this.getAttribute('humidity');
         if (attrVal) {
-            return parseInt(attrVal);
+            return parseInt(attrVal)
         }
         return 0;
     }
-    set humidity(humidity) {
+    set humidity(humidity: number) {
         this.setAttribute('humidity', humidity.toString());
     }
-    get location() {
+    get location(): string {
         return this.getAttribute('location') || 'UNKNOWN';
     }
-    set location(location) {
+    set location(location: string) {
         this.setAttribute('location', location);
     }
-    get pin() {
+    get pin(): number {
         return parseInt(this.getAttribute('pin')) || -1;
     }
-    set pin(pin) {
+    set pin(pin: number) {
         this.setAttribute('pin', pin.toString());
     }
-    get unit() {
+    get unit(): string {
         return this.getAttribute('unit') || 'F';
     }
-    set unit(unit) {
+    set unit(unit: string) {
         this.setAttribute('unit', unit);
     }
-    get recorded() {
+    get recorded(): Date {
         let recorded = this.getAttribute('recorded');
+
         return recorded ? new Date(recorded) : null;
     }
-    set recorded(recorded) {
+    set recorded(recorded: Date) {
         if (recorded) {
             this.setAttribute('recorded', recorded.toLocaleString('en-US'));
         }
     }
-    static create({ temperature, humidity, location, pin, unit, recorded }) {
-        let newEntry = document.createElement('reading-entry');
+
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+    }
+
+    static create({temperature, humidity, location, pin, unit, recorded}: Reading) {
+        let newEntry: ReadingEntry = document.createElement('reading-entry') as ReadingEntry;
         newEntry.temperature = temperature;
         newEntry.humidity = humidity;
         newEntry.location = location;
@@ -90,8 +104,9 @@ class ReadingEntry extends HTMLDivElement {
         newEntry.recorded = recorded;
         return newEntry;
     }
-    get template() {
-        return html `            
+
+    get template(): Function {
+        return html`            
             <div class="bold col-md-2">
                 ${'location'}
             </div>
@@ -109,29 +124,36 @@ class ReadingEntry extends HTMLDivElement {
             </div>                
         `;
     }
-    static get observedAttributes() {
+
+    static get observedAttributes(): Array<string> {
         return ['humidity', 'location', 'pin', 'temperature', 'unit', 'recorded'];
     }
-    attributeChangedCallback(name, oldValue, newValue) {
+    attributeChangedCallback(name: string, oldValue: any, newValue: any) {        
         this.render();
     }
 }
+
 export default class ReadingPanel extends HTMLDivElement {
-    updateData(data) {
-        let entries = getAll('reading-entry', this);
-        let existingLocation = entries.filter((entry, index) => entry.location === data.location);
+
+    updateData(data: Reading) {
+        let entries: ReadingEntry[] = getAll('reading-entry', this) as ReadingEntry[];
+
+        let existingLocation: ReadingEntry[] = entries.filter((entry, index) => entry.location === data.location);
         if (existingLocation) {
             existingLocation[0].data = data;
-        }
-        else {
-            this.appendChild(ReadingEntry.create(data));
+        } else {
+            this.appendChild(
+                ReadingEntry.create(data)
+            );
         }
     }
+
     render() {
         this.shadowRoot.innerHTML = this.template();
     }
-    get template() {
-        return html `            
+    
+    get template(): Function {
+        return html`            
             <div class="bold col-md-2">
                 Location
             </div>
@@ -150,6 +172,7 @@ export default class ReadingPanel extends HTMLDivElement {
             <slot></slot>
         `;
     }
+
     constructor() {
         super();
         let shadow = this.attachShadow({ mode: 'open' });
